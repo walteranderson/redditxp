@@ -2,13 +2,19 @@ import fetchJsonp from 'fetch-jsonp';
 
 export async function load({ params, url }) {
 	const redditUrl = `https://reddit.com/${params.path}.json?${url.searchParams.toString()}`;
-	const res = await fetchJsonp(redditUrl, { jsonpCallback: 'jsonp' });
-	const data = await res.json();
-	const posts = data.data.children.map(formatItem);
-
+	const posts = await getPosts(redditUrl);
 	return {
 		posts,
 	}
+}
+
+async function getPosts(url) {
+	const res = await fetchJsonp(url, { jsonpCallback: 'jsonp' });
+	const data = await res.json();
+	const posts = data.data.children
+		.map(formatItem)
+		.filter((p) => !p.url.includes('redgifs'));
+	return posts;
 }
 
 function formatItem(item) {
