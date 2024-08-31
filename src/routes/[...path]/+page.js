@@ -19,6 +19,14 @@ function formatItem(item) {
 		album = extractFromMediaMetadata(item.data);
 	}
 
+	let video = null;
+	if (item.data.preview?.reddit_video_preview?.fallback_url) {
+		video = {
+			src: item.data.preview.reddit_video_preview.fallback_url
+		}
+	}
+
+
 	return {
 		id: item.data.id,
 		author: item.data.author,
@@ -26,6 +34,8 @@ function formatItem(item) {
 		subreddit: item.data.subreddit,
 		url,
 		album,
+		video,
+		isVideo: video !== null,
 		isAlbum: album.length !== 0
 	};
 }

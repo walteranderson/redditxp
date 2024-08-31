@@ -1,7 +1,7 @@
 <script>
 	import { onDestroy } from "svelte";
 
-	let sec = 5;
+	let sec = 15;
 	export let data;
 
 	let interval;
@@ -45,7 +45,13 @@
 </script>
 
 {#if current}
-	<img src={current.url} alt={current.title} />
+	{#if current.isVideo}
+		<video autoplay loop>
+			<source src={current.video.src} />
+		</video>
+	{:else}
+		<img src={current.url} alt={current.title} />
+	{/if}
 {/if}
 
 <style>
