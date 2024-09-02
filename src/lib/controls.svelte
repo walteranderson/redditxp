@@ -1,43 +1,56 @@
 <script>
-  import { CircleEllipsis, TimerReset } from "lucide-svelte";
+  import { CircleEllipsis, TimerReset, Play, Pause } from "lucide-svelte";
   import { debounce } from "$lib/debounce";
-
-  export let time; // ms
-
-  let seconds = time / 1000;
+  import { timer } from "$lib/timer";
 
   let open = false;
-  const onClick = () => {
+  const toggleOpen = () => {
     open = !open;
   };
 
   const onTimeChanged = debounce((event) => {
-    time = event.target.value * 1000;
+    timer.setInterval(event.target.value * 1000);
   });
 </script>
 
 {#if open}
   <div class="menu">
     <div class="menu-item">
-      <TimerReset />
-      <input type="number" bind:value={seconds} on:input={onTimeChanged} />
+      <button class="autoplay-button" on:click={timer.toggleAutoplay}>
+        {#if $timer.autoplay}
+          <Play />
+        {:else}
+          <Pause />
+        {/if}
+      </button>
+      <input
+        type="number"
+        value={$timer.interval / 1000}
+        on:input={onTimeChanged}
+      />
     </div>
   </div>
 {/if}
 
-<button on:click={onClick}>
+<button class="fab" on:click={toggleOpen}>
   <CircleEllipsis size={32} />
 </button>
 
 <style lang="postcss">
   button {
-    position: absolute;
-    bottom: 1rem;
-    cursor: pointer;
-    left: 1rem;
-    color: white;
     background: none;
     border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+  .fab {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    color: white;
+  }
+  .autoplay-button {
+    display: flex;
   }
 
   .menu {

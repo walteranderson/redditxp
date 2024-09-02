@@ -1,7 +1,7 @@
 <script>
-  import { onMount } from "svelte";
   import { getPosts } from "$lib/reddit-api";
   import { page } from "$app/stores";
+  import { timer } from "$lib/timer";
   import Controls from "$lib/controls.svelte";
 
   export let data;
@@ -28,31 +28,38 @@
     after = res.after;
   }
 
-  // ----
-  let time = 30000;
-  let ref;
-  onMount(() => {
-    start();
-    return () => {
-      stop();
-    };
-  });
-  function start() {
-    console.log("start");
-    clearInterval(ref);
-    ref = setInterval(tick, time);
-  }
-  function stop() {
-    console.log("stop");
-    clearInterval(ref);
-  }
-  function tick() {
-    console.log("tick", { current, queue });
+  $: if ($timer.tick) {
     current++;
     if (current + 1 === queue.length) {
       loadMore();
     }
   }
+
+  // ----
+  let time = 10000;
+  let autoplay = false;
+  // let ref;
+  // $: if (autoplay === true) {
+  //   start();
+  // } else {
+  //   stop();
+  // }
+  // function start() {
+  //   console.log("start");
+  //   clearInterval(ref);
+  //   ref = setInterval(tick, time);
+  // }
+  // function stop() {
+  //   console.log("stop");
+  //   clearInterval(ref);
+  // }
+  // function tick() {
+  //   console.log("tick", { current, queue });
+  //   current++;
+  //   if (current + 1 === queue.length) {
+  //     loadMore();
+  //   }
+  // }
   // ----
 
   const onKeydown = (event) => {
@@ -60,21 +67,21 @@
       case "ArrowLeft":
         if (current === 0) return;
         current--;
-        start();
+        // start();
         break;
       case "ArrowRight":
         current++;
-        start();
+        // start();
         break;
     }
   };
 
-  $: console.log(queue[current]);
+  $: console.log("current", queue[current]);
 </script>
 
 <svelte:window on:keydown={onKeydown} />
 
-<Controls bind:time />
+<Controls />
 
 {#if queue[current]}
   {@const p = queue[current]}
