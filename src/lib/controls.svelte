@@ -1,17 +1,27 @@
 <script>
-  import { CircleEllipsis } from "lucide-svelte";
+  import { CircleEllipsis, TimerReset } from "lucide-svelte";
+  import { debounce } from "$lib/debounce";
 
   export let time; // ms
+
+  let seconds = time / 1000;
 
   let open = false;
   const onClick = () => {
     open = !open;
   };
+
+  const onTimeChanged = debounce((event) => {
+    time = event.target.value * 1000;
+  });
 </script>
 
 {#if open}
   <div class="menu">
-    <input type="number" bind:value={time} />
+    <div class="menu-item">
+      <TimerReset />
+      <input type="number" bind:value={seconds} on:input={onTimeChanged} />
+    </div>
   </div>
 {/if}
 
@@ -34,7 +44,7 @@
     position: absolute;
     bottom: 4.5rem;
     left: 1rem;
-    background-color: rgba(255, 255, 255, 0.75);
+    background-color: rgba(255, 255, 255, 0.85);
 
     padding: 0.75rem 1rem;
     border-radius: 0.25rem;
@@ -42,5 +52,12 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+  }
+
+  .menu-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
   }
 </style>
