@@ -64,19 +64,20 @@
 
   const onKeydown = (event) => {
     switch (event.key) {
-      case "ArrowLeft":
+      case "ArrowLeft": {
         if (current === 0) return;
         current--;
-        // start();
         break;
-      case "ArrowRight":
+      }
+      case "ArrowRight": {
         current++;
-        // start();
         break;
+      }
     }
   };
 
   $: console.log("current", queue[current]);
+  $: console.log("queue", queue);
 </script>
 
 <svelte:window on:keydown={onKeydown} />
