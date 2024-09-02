@@ -9,6 +9,7 @@
 	let queue = [];
 
 	data.posts.forEach(addToQueue);
+
 	function addToQueue(post) {
 		if (post.album.length) {
 			queue.push(...post.album);
@@ -21,22 +22,20 @@
 	async function loadMore() {
 		const searchParams = $page.url.searchParams;
 		searchParams.set("after", after);
-
 		const res = await getPosts($page.params.path, searchParams);
-		console.log(res);
 		res.posts.forEach(addToQueue);
 		after = res.after;
 	}
 
+	// ----
+	let time = 5000;
+	let ref;
 	onMount(() => {
 		start();
 		return () => {
 			stop();
 		};
 	});
-
-	let time = 5000;
-	let ref;
 	function start() {
 		console.log("start");
 		clearInterval(ref);
@@ -49,42 +48,30 @@
 	function tick() {
 		console.log("tick", { current, queue });
 		current++;
-
 		if (current + 1 === queue.length) {
 			loadMore();
 		}
 	}
-
-	$: console.log(queue[current]);
+	// ----
 </script>
 
-<!--
-<input bind:value={sec} type="number" />
--->
-
-<div class="container">
-	{#if queue[current]}
-		{@const p = queue[current]}
-		{#if p.video}
-			<video autoplay loop>
-				<track kind="captions" />
-				<source src={p.video.src} />
-			</video>
-		{:else}
-			<div class="img" style={`background-image:url(${p.url})`} />
-		{/if}
+{#if queue[current]}
+	{@const p = queue[current]}
+	{#if p.video}
+		<video autoplay loop>
+			<track kind="captions" />
+			<source src={p.video.src} />
+		</video>
+	{:else}
+		<div class="img" style={`background-image:url(${p.url})`} />
 	{/if}
-</div>
+{/if}
 
 <style>
 	:global(html, body) {
 		background-color: black;
 		height: 100%;
 		margin: 0;
-	}
-	.container {
-		background-color: black;
-		height: 100%;
 	}
 	.img {
 		width: 100%;
