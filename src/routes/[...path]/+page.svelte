@@ -30,9 +30,10 @@
 
   $: if ($timer.tick) {
     current++;
-    if (current + 1 === queue.length) {
-      loadMore();
-    }
+  }
+
+  $: if (current + 2 === queue.length) {
+    loadMore();
   }
 
   // ----
@@ -70,6 +71,7 @@
         break;
       }
       case "ArrowRight": {
+        if (current + 1 === queue.length) return;
         current++;
         break;
       }
@@ -84,17 +86,18 @@
 
 <Controls />
 
-{#if queue[current]}
-  {@const p = queue[current]}
-  {#if p.video}
-    <video autoplay loop>
-      <track kind="captions" />
-      <source src={p.video.src} />
-    </video>
-  {:else}
-    <div class="img" style={`background-image:url(${p.url})`} />
-  {/if}
-{/if}
+{#each queue as item, idx}
+  <div class="item" class:hidden={idx !== current}>
+    {#if item.video}
+      <video autoplay loop>
+        <track kind="captions" />
+        <source src={item.video.src} />
+      </video>
+    {:else}
+      <div class="img" style={`background-image:url(${item.url})`} />
+    {/if}
+  </div>
+{/each}
 
 <style>
   :global(html, body) {
@@ -109,5 +112,11 @@
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
+  }
+  .item {
+    height: 100%;
+  }
+  .hidden {
+    display: none;
   }
 </style>
