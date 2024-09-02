@@ -10,7 +10,12 @@
 
   const onTimeChanged = debounce((event) => {
     timer.setInterval(event.target.value * 1000);
-  });
+  }, 800);
+  const onInputKeydown = (event) => {
+    if (event.key === "Enter") {
+      toggleOpen();
+    }
+  };
 </script>
 
 {#if open}
@@ -27,6 +32,7 @@
         type="number"
         value={$timer.interval / 1000}
         on:input={onTimeChanged}
+        on:keydown={onInputKeydown}
       />
     </div>
   </div>

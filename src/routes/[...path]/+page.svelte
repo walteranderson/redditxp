@@ -36,33 +36,6 @@
     loadMore();
   }
 
-  // ----
-  let time = 10000;
-  let autoplay = false;
-  // let ref;
-  // $: if (autoplay === true) {
-  //   start();
-  // } else {
-  //   stop();
-  // }
-  // function start() {
-  //   console.log("start");
-  //   clearInterval(ref);
-  //   ref = setInterval(tick, time);
-  // }
-  // function stop() {
-  //   console.log("stop");
-  //   clearInterval(ref);
-  // }
-  // function tick() {
-  //   console.log("tick", { current, queue });
-  //   current++;
-  //   if (current + 1 === queue.length) {
-  //     loadMore();
-  //   }
-  // }
-  // ----
-
   const onKeydown = (event) => {
     switch (event.key) {
       case "ArrowLeft": {

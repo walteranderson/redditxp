@@ -10,10 +10,15 @@ export function createTimer({ autoplay, interval }) {
   });
 
   let ref;
-  function start() {
+  function start(i) {
     if (ref) stop();
-    console.log('timer:start', { interval: get(store).interval });
-    ref = setInterval(tick, get(store).interval);
+    const interval = i || get(store).interval;
+    if (interval === 0) {
+      stop();
+      return;
+    }
+    console.log('timer:start', { interval });
+    ref = setInterval(tick, interval);
   }
   function stop() {
     console.log('timer:stop');
@@ -32,9 +37,17 @@ export function createTimer({ autoplay, interval }) {
     subscribe: store.subscribe,
     start,
     stop,
-    setInterval: (interval) => {
-      store.update(s => ({ ...s, interval }))
-      start();
+    setInterval: (newInterval) => {
+      store.update(s => {
+        let interval = newInterval >= 0 ? newInterval : 0;
+        if (s.autoplay) {
+          start(interval);
+        }
+        return {
+          ...s,
+          interval,
+        }
+      })
     },
     toggleAutoplay: () => store.update(s => {
       const autoplay = !s.autoplay;
