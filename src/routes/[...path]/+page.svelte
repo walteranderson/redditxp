@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { getPosts } from "$lib/reddit";
+  import { getPosts } from "$lib/reddit-api";
   import { page } from "$app/stores";
   import Controls from "$lib/controls.svelte";
 
@@ -55,8 +55,24 @@
   }
   // ----
 
-  $: console.log({ time });
+  const onKeydown = (event) => {
+    switch (event.key) {
+      case "ArrowLeft":
+        if (current === 0) return;
+        current--;
+        start();
+        break;
+      case "ArrowRight":
+        current++;
+        start();
+        break;
+    }
+  };
+
+  $: console.log(queue[current]);
 </script>
+
+<svelte:window on:keydown={onKeydown} />
 
 <Controls bind:time />
 
