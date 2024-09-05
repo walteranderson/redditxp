@@ -1,7 +1,14 @@
 <script>
-  import { CircleEllipsis, TimerReset, Play, Pause } from "lucide-svelte";
-  import { debounce } from "$lib/debounce";
-  import { timer } from "$lib/timer";
+  import { CircleEllipsis, Play, Pause } from "lucide-svelte";
+  import { timer } from "$lib/timer-store";
+
+  function debounce(func, timeout = 300) {
+    let timer;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => func.apply(this, args), timeout);
+    };
+  }
 
   let open = false;
   const toggleOpen = () => {

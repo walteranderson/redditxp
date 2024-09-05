@@ -1,16 +1,18 @@
 <script>
   import { getPosts } from "$lib/reddit-api";
   import { page } from "$app/stores";
-  import { timer } from "$lib/timer";
-  import Controls from "$lib/controls.svelte";
+  import { timer } from "$lib/timer-store";
+  import Controls from "$lib/components/controls.svelte";
+  import Video from "$lib/components/video.svelte";
+  import Image from "$lib/components/image.svelte";
 
   export let data;
 
-  let current = 0;
+  let currentIdx = 0;
   let queue = [];
+  let after = data.after;
 
   data.posts.forEach(addToQueue);
-
   function addToQueue(post) {
     if (post.album.length) {
       queue.push(...post.album);
@@ -19,7 +21,10 @@
     }
   }
 
-  let after = data.after;
+  function tick() {
+    currentIdx++;
+  }
+
   async function loadMore() {
     const searchParams = $page.url.searchParams;
     searchParams.set("after", after);
@@ -28,49 +33,39 @@
     after = res.after;
   }
 
-  $: if ($timer.tick) {
-    current++;
-  }
-
-  $: if (current + 2 === queue.length) {
-    loadMore();
-  }
-
   const onKeydown = (event) => {
     switch (event.key) {
       case "ArrowLeft": {
-        if (current === 0) return;
-        current--;
+        if (currentIdx === 0) return;
+        currentIdx--;
+        timer.restart();
         break;
       }
       case "ArrowRight": {
-        if (current + 1 === queue.length) return;
-        current++;
+        if (currentIdx + 1 === queue.length) return;
+        currentIdx++;
+        timer.restart();
         break;
       }
     }
   };
 
-  $: console.log("current", queue[current]);
-  $: console.log("queue", queue);
+  $: if ($timer.tick) tick();
+  $: if (currentIdx + 2 === queue.length) loadMore();
+  $: current = queue[currentIdx];
 </script>
 
 <svelte:window on:keydown={onKeydown} />
 
 <Controls />
 
-{#each queue as item, idx}
-  <div class="item" class:hidden={idx !== current}>
-    {#if item.video}
-      <video autoplay loop>
-        <track kind="captions" />
-        <source src={item.video.src} />
-      </video>
-    {:else}
-      <div class="img" style={`background-image:url(${item.url})`} />
-    {/if}
-  </div>
-{/each}
+{#if current}
+  {#if current.video}
+    <Video src={current.video.src} />
+  {:else}
+    <Image url={current.url} />
+  {/if}
+{/if}
 
 <style>
   :global(html, body) {
@@ -78,18 +73,5 @@
     height: 100%;
     margin: 0;
     font-family: Helvetica, Arial, sans-serif;
-  }
-  .img {
-    width: 100%;
-    height: 100%;
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-  .item {
-    height: 100%;
-  }
-  .hidden {
-    display: none;
   }
 </style>
