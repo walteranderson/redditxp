@@ -1,7 +1,7 @@
 <script>
   import { CircleEllipsis, Play, Pause } from "lucide-svelte";
-  import { interval, autoplay } from "$lib/timer-store";
-  import { currentIdx, queue } from "$lib/posts-store";
+  import { interval, autoplay } from "$lib/timer";
+  import { currentIdx, queue } from "$lib/posts";
 
   function debounce(func, timeout = 300) {
     let ref;
@@ -31,7 +31,6 @@
   };
 
   const onKeydown = (event) => {
-    console.log("before", { $currentIdx });
     switch (event.key) {
       case "ArrowUp": {
         $autoplay = !$autoplay;
@@ -48,7 +47,6 @@
         break;
       }
     }
-    console.log("after", { $currentIdx });
   };
 </script>
 

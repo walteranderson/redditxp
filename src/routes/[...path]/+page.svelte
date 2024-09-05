@@ -1,37 +1,16 @@
 <script>
-  import { getPosts } from "$lib/reddit-api";
-  import { page } from "$app/stores";
   import Controls from "$lib/components/controls.svelte";
   import Video from "$lib/components/video.svelte";
   import Image from "$lib/components/image.svelte";
-  import { tick } from "$lib/timer-store";
-  import { currentIdx, queue } from "$lib/posts-store";
+  import { tick } from "$lib/timer";
+  import { currentIdx, queue } from "$lib/posts";
 
   export let data;
 
-  let after = data.after;
-
-  data.posts.forEach(addToQueue);
-  function addToQueue(post) {
-    if (post.album.length) {
-      $queue = [...$queue, ...post.album];
-    } else {
-      $queue = [...$queue, post];
-    }
-  }
-
-  $: if ($currentIdx + 2 === $queue.length) loadMore();
-  async function loadMore() {
-    const searchParams = $page.url.searchParams;
-    searchParams.set("after", after);
-    const res = await getPosts($page.params.path, searchParams);
-    res.posts.forEach(addToQueue);
-    after = res.after;
-  }
+  $: if ($currentIdx + 2 === $queue.length) data.loadMore();
 
   $: if ($tick) next();
   function next() {
-    console.log("tick");
     $currentIdx++;
   }
 
