@@ -1,15 +1,14 @@
 <script>
   export let url = "";
+  export let title = "";
 </script>
 
-<div style={`background-image:url(${url})`} />
+<img src={url} alt={title} />
 
 <style>
-  div {
+  img {
     width: 100%;
     height: 100%;
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
+    object-fit: contain;
   }
 </style>

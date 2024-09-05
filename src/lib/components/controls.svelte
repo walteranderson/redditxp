@@ -52,31 +52,44 @@
 
 <svelte:window on:keydown={onKeydown} />
 
-{#if open}
-  <div class="menu">
-    <div class="menu-item">
-      <button class="autoplay-button" on:click={onToggleAutoplay}>
-        {#if $autoplay}
-          <Pause />
-        {:else}
-          <Play />
-        {/if}
-      </button>
-      <input
-        type="number"
-        value={$interval / 1000}
-        on:input={onTimeChanged}
-        on:keydown={onInputKeydown}
-      />
+<div class="controls">
+  {#if open}
+    <div class="menu">
+      <div class="menu-item">
+        <button class="autoplay-button" on:click={onToggleAutoplay}>
+          {#if $autoplay}
+            <Pause />
+          {:else}
+            <Play />
+          {/if}
+        </button>
+        <input
+          type="number"
+          value={$interval / 1000}
+          on:input={onTimeChanged}
+          on:keydown={onInputKeydown}
+        />
+      </div>
     </div>
-  </div>
-{/if}
+  {/if}
 
-<button class="fab" on:click={toggleOpen}>
-  <CircleEllipsis size={32} />
-</button>
+  <button class="fab" on:click={toggleOpen}>
+    <CircleEllipsis size={32} />
+  </button>
+</div>
 
 <style lang="postcss">
+  .controls {
+    z-index: 99;
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: start;
+  }
+
   button {
     background: none;
     border: 0;
@@ -84,9 +97,6 @@
     cursor: pointer;
   }
   .fab {
-    position: absolute;
-    bottom: 1rem;
-    left: 1rem;
     color: white;
   }
   .autoplay-button {
@@ -94,9 +104,6 @@
   }
 
   .menu {
-    position: absolute;
-    bottom: 4.5rem;
-    left: 1rem;
     background-color: rgba(255, 255, 255, 0.85);
 
     padding: 0.75rem 1rem;

@@ -2,7 +2,7 @@
   import Controls from "$lib/components/controls.svelte";
   import Video from "$lib/components/video.svelte";
   import Image from "$lib/components/image.svelte";
-  import { tick } from "$lib/timer";
+  import { tick, autoplay } from "$lib/timer";
   import { currentIdx, queue, prefetch } from "$lib/posts";
 
   export let data;
@@ -24,18 +24,20 @@
     {#if current.video}
       <Video src={current.video.src} />
     {:else}
-      <Image url={current.url} />
+      <Image url={current.url} title={current.title} />
     {/if}
   </div>
 {/if}
 
-<div class="prefetch">
-  {#each $prefetch as post}
-    {#if !post.video}
-      <link rel="preload" href={post.url} as="image" />
-    {/if}
-  {/each}
-</div>
+{#if $autoplay}
+  <div class="prefetch">
+    {#each $prefetch as post}
+      {#if !post.video}
+        <link rel="prefetch" fetchpriority="low" href={post.url} as="image" />
+      {/if}
+    {/each}
+  </div>
+{/if}
 
 <style>
   :global(html, body) {
