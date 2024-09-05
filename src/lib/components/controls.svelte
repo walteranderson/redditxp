@@ -1,6 +1,7 @@
 <script>
   import { CircleEllipsis, Play, Pause } from "lucide-svelte";
   import { interval, autoplay } from "$lib/timer-store";
+  import { currentIdx, queue } from "$lib/posts-store";
 
   function debounce(func, timeout = 300) {
     let ref;
@@ -28,7 +29,30 @@
       toggleOpen();
     }
   };
+
+  const onKeydown = (event) => {
+    console.log("before", { $currentIdx });
+    switch (event.key) {
+      case "ArrowUp": {
+        $autoplay = !$autoplay;
+        break;
+      }
+      case "ArrowLeft": {
+        if ($currentIdx === 0) return;
+        $currentIdx = $currentIdx - 1;
+        break;
+      }
+      case "ArrowRight": {
+        if ($currentIdx + 1 === $queue.length) return;
+        $currentIdx = $currentIdx + 1;
+        break;
+      }
+    }
+    console.log("after", { $currentIdx });
+  };
 </script>
+
+<svelte:window on:keydown={onKeydown} />
 
 {#if open}
   <div class="menu">

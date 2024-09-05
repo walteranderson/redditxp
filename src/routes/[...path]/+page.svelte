@@ -4,23 +4,23 @@
   import Controls from "$lib/components/controls.svelte";
   import Video from "$lib/components/video.svelte";
   import Image from "$lib/components/image.svelte";
-  import { autoplay, tick } from "$lib/timer-store";
+  import { tick } from "$lib/timer-store";
+  import { currentIdx, queue } from "$lib/posts-store";
 
   export let data;
 
-  let currentIdx = 0;
-  let queue = [];
   let after = data.after;
 
   data.posts.forEach(addToQueue);
   function addToQueue(post) {
     if (post.album.length) {
-      queue.push(...post.album);
+      $queue = [...$queue, ...post.album];
     } else {
-      queue.push(post);
+      $queue = [...$queue, post];
     }
   }
 
+  $: if ($currentIdx + 2 === $queue.length) loadMore();
   async function loadMore() {
     const searchParams = $page.url.searchParams;
     searchParams.set("after", after);
@@ -29,33 +29,14 @@
     after = res.after;
   }
 
-  const onKeydown = (event) => {
-    switch (event.key) {
-      case "ArrowUp": {
-        $autoplay = !$autoplay;
-        break;
-      }
-      case "ArrowLeft": {
-        if (currentIdx === 0) return;
-        currentIdx--;
-        // timer.restart();
-        break;
-      }
-      case "ArrowRight": {
-        if (currentIdx + 1 === queue.length) return;
-        currentIdx++;
-        // timer.restart();
-        break;
-      }
-    }
-  };
+  $: if ($tick) next();
+  function next() {
+    console.log("tick");
+    $currentIdx++;
+  }
 
-  $: if ($tick) currentIdx++;
-  $: if (currentIdx + 2 === queue.length) loadMore();
-  $: current = queue[currentIdx];
+  $: current = $queue[$currentIdx];
 </script>
-
-<svelte:window on:keydown={onKeydown} />
 
 <Controls />
 
