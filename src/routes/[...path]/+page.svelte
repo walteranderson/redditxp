@@ -3,7 +3,7 @@
   import Video from "$lib/components/video.svelte";
   import Image from "$lib/components/image.svelte";
   import { tick } from "$lib/timer";
-  import { currentIdx, queue } from "$lib/posts";
+  import { currentIdx, queue, prefetch } from "$lib/posts";
 
   export let data;
 
@@ -20,7 +20,7 @@
 <Controls />
 
 {#if current}
-  <div>
+  <div class="current">
     {#if current.video}
       <Video src={current.video.src} />
     {:else}
@@ -28,6 +28,14 @@
     {/if}
   </div>
 {/if}
+
+<div class="prefetch">
+  {#each $prefetch as post}
+    {#if !post.video}
+      <link rel="preload" href={post.url} as="image" />
+    {/if}
+  {/each}
+</div>
 
 <style>
   :global(html, body) {
@@ -37,7 +45,7 @@
     font-family: Helvetica, Arial, sans-serif;
   }
 
-  div {
+  .current {
     display: flex;
     flex-direction: column;
     align-items: center;
