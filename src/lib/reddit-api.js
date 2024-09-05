@@ -4,7 +4,6 @@ export async function getPosts(path, searchParams) {
   const url = `https://www.reddit.com/${path}.json?${searchParams.toString()}`;
   const res = await fetchJsonp(url, { jsonpCallback: 'jsonp' });
   const data = await res.json();
-  console.log(data);
   const posts = data.data.children
     .filter(i => !i.data.stickied)
     .map(formatItem)

@@ -1,76 +1,26 @@
-import { get, writable } from "svelte/store";
+import { derived, writable } from "svelte/store";
 
-export const timer = createTimer({ autoplay: false, interval: 5_000 });
-
-export function createTimer({ autoplay, interval }) {
-  const store = writable({
-    autoplay,
-    interval,
-    tick: null
-  });
-
+export const autoplay = writable(false);
+export const interval = writable(1_000);
+export const tick = derived([autoplay, interval], ([$autoplay, $interval], set) => {
   let ref;
-  if (autoplay) {
-    console.log('here');
-  }
 
-  function start(i) {
-    if (ref) stop();
-    const interval = i || get(store).interval;
-    if (interval === 0) {
-      stop();
-      return;
-    }
-    console.log('timer:start', { interval });
-    ref = setInterval(tick, interval);
-  }
-
-  function stop() {
-    console.log('timer:stop');
+  const start = (i) => {
+    ref = setInterval(() => set(Date.now()), i);
+  };
+  const clear = () => {
+    if (!ref) return;
     clearInterval(ref);
+  };
+
+  if ($autoplay) {
+    if (ref) clear();
+    start($interval)
+  } else {
+    clear();
   }
 
-  function tick() {
-    console.log('timer:tick', new Date());
-    store.update((s) => ({
-      ...s,
-      tick: new Date()
-    }));
+  return () => {
+    clear();
   }
-
-  function restart() {
-    if (!get(store).autoplay) return;
-    console.log('timer:restart');
-    stop();
-  }
-
-  function setInterval(newInterval) {
-    store.update(s => {
-      let interval = newInterval >= 0 ? newInterval : 0;
-      if (s.autoplay) {
-        start(interval);
-      }
-      return {
-        ...s,
-        interval,
-      }
-    })
-  }
-
-  function toggleAutoplay() {
-    store.update(s => {
-      const autoplay = !s.autoplay;
-      autoplay ? start() : stop();
-      return { ...s, autoplay }
-    })
-  }
-
-  return {
-    subscribe: store.subscribe,
-    start,
-    stop,
-    restart,
-    setInterval,
-    toggleAutoplay,
-  }
-}
+});

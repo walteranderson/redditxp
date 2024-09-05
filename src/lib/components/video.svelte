@@ -2,7 +2,15 @@
   export let src = "";
 </script>
 
-<video autoplay loop>
-  <track kind="captions" />
-  <source {src} />
-</video>
+{#key src}
+  <video autoplay loop>
+    <track kind="captions" />
+    <source {src} />
+  </video>
+{/key}
+
+<style>
+  video {
+    width: 100%;
+  }
+</style>

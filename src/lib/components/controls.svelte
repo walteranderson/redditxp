@@ -1,12 +1,12 @@
 <script>
   import { CircleEllipsis, Play, Pause } from "lucide-svelte";
-  import { timer } from "$lib/timer-store";
+  import { interval, autoplay } from "$lib/timer-store";
 
   function debounce(func, timeout = 300) {
-    let timer;
+    let ref;
     return (...args) => {
-      clearTimeout(timer);
-      timer = setTimeout(() => func.apply(this, args), timeout);
+      clearTimeout(ref);
+      ref = setTimeout(() => func.apply(this, args), timeout);
     };
   }
 
@@ -15,9 +15,14 @@
     open = !open;
   };
 
+  const onToggleAutoplay = () => {
+    $autoplay = !$autoplay;
+  };
+
   const onTimeChanged = debounce((event) => {
-    timer.setInterval(event.target.value * 1000);
+    $interval = event.target.value * 1000;
   }, 800);
+
   const onInputKeydown = (event) => {
     if (event.key === "Enter") {
       toggleOpen();
@@ -28,16 +33,16 @@
 {#if open}
   <div class="menu">
     <div class="menu-item">
-      <button class="autoplay-button" on:click={timer.toggleAutoplay}>
-        {#if $timer.autoplay}
-          <Play />
-        {:else}
+      <button class="autoplay-button" on:click={onToggleAutoplay}>
+        {#if $autoplay}
           <Pause />
+        {:else}
+          <Play />
         {/if}
       </button>
       <input
         type="number"
-        value={$timer.interval / 1000}
+        value={$interval / 1000}
         on:input={onTimeChanged}
         on:keydown={onInputKeydown}
       />
