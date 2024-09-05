@@ -5,8 +5,8 @@ export async function load({ params, url }) {
   const data = await getPosts(params.path, url.searchParams);
 
   addToQueue(data.posts);
-  let after = data.after;
 
+  let after = data.after;
   async function loadMore() {
     const query = url.searchParams;
     query.set('after', after);

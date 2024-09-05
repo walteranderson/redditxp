@@ -1,7 +1,8 @@
 import { derived, writable } from "svelte/store";
+import { get } from './storage';
 
-export const autoplay = writable(false);
-export const interval = writable(1_000);
+export const autoplay = writable(get('autoplay'));
+export const interval = writable(get('interval'));
 export const tick = derived([autoplay, interval], ([$autoplay, $interval], set) => {
   let ref;
 

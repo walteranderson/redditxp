@@ -55,4 +55,8 @@
     width: 100%;
     height: 100%;
   }
+
+  .prefetch {
+    display: none;
+  }
 </style>
