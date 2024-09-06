@@ -28,7 +28,6 @@ function formatItem(item) {
     }
   }
 
-
   return {
     id: item.data.id,
     author: item.data.author,

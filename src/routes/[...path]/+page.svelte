@@ -17,7 +17,6 @@
   }
 
   $: current = $queue[$currentIdx];
-  $: console.log(current, $queue);
 </script>
 
 <Controls />

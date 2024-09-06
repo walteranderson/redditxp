@@ -38,12 +38,12 @@
       }
       case "ArrowLeft": {
         if ($currentIdx === 0) return;
-        $currentIdx = $currentIdx - 1;
+        $currentIdx--;
         break;
       }
       case "ArrowRight": {
         if ($currentIdx + 1 === $queue.length) return;
-        $currentIdx = $currentIdx + 1;
+        $currentIdx++;
         break;
       }
     }
