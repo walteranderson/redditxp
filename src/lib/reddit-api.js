@@ -45,10 +45,18 @@ function extractFromMediaMetadata(data) {
 
   let album = [];
   for (const id of ids) {
-    const m = data.media_metadata[id];
+    const media = data.media_metadata[id];
+
+    let url;
+    if (media.m === 'image/gif' && media.s?.gif) {
+      url = media.s.gif;
+    } else {
+      url = decode(media.p[media.p.length - 1].u);
+    }
+
     album.push({
       title: data.title,
-      url: decode(m.p[m.p.length - 1].u)
+      url,
     });
   }
   return album;

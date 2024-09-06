@@ -8,8 +8,8 @@ export const prefetch = derived(
   [queue, currentIdx],
   ([$queue, $currentIdx], set) => {
     set($queue.slice(
-      Math.max($currentIdx - 3, 0),
-      $currentIdx + 3
+      $currentIdx,
+      $currentIdx + 5
     ));
   }
 )

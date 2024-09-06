@@ -2,19 +2,22 @@
   import Controls from "$lib/components/controls.svelte";
   import Video from "$lib/components/video.svelte";
   import Image from "$lib/components/image.svelte";
-  import { tick, autoplay } from "$lib/timer";
+  import { tick } from "$lib/timer";
   import { currentIdx, queue, prefetch } from "$lib/posts";
 
   export let data;
-
-  $: if ($currentIdx + 2 === $queue.length) data.loadMore();
 
   $: if ($tick) next();
   function next() {
     $currentIdx++;
   }
 
+  $: if ($currentIdx + 2 >= $queue.length) {
+    data.loadMore();
+  }
+
   $: current = $queue[$currentIdx];
+  $: console.log(current, $queue);
 </script>
 
 <Controls />
@@ -29,15 +32,15 @@
   </div>
 {/if}
 
-{#if $autoplay}
-  <div class="prefetch">
-    {#each $prefetch as post}
-      {#if !post.video}
-        <link rel="prefetch" fetchpriority="low" href={post.url} as="image" />
-      {/if}
-    {/each}
-  </div>
-{/if}
+<div class="prefetch">
+  {#each $prefetch as post}
+    {#if post.video}
+      <Video src={post.video.src} />
+    {:else}
+      <Image url={post.url} title={post.title} />
+    {/if}
+  {/each}
+</div>
 
 <style>
   :global(html, body) {
@@ -55,7 +58,6 @@
     width: 100%;
     height: 100%;
   }
-
   .prefetch {
     display: none;
   }

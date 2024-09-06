@@ -32,6 +32,10 @@
 
   const onKeydown = (event) => {
     switch (event.key) {
+      case " ": {
+        $autoplay = !$autoplay;
+        break;
+      }
       case "ArrowLeft": {
         if ($currentIdx === 0) return;
         $currentIdx = $currentIdx - 1;
