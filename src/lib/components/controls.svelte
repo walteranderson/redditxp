@@ -1,5 +1,5 @@
 <script>
-  import { CircleEllipsis, Play, Pause } from "lucide-svelte";
+  import { Play, Pause, Maximize, Minimize } from "lucide-svelte";
   import { interval, autoplay } from "$lib/timer";
   import { currentIdx, queue } from "$lib/posts";
 
@@ -11,11 +11,6 @@
     };
   }
 
-  let open = false;
-  const toggleOpen = () => {
-    open = !open;
-  };
-
   const onToggleAutoplay = () => {
     $autoplay = !$autoplay;
   };
@@ -23,12 +18,6 @@
   const onTimeChanged = debounce((event) => {
     $interval = event.target.value * 1000;
   }, 800);
-
-  const onInputKeydown = (event) => {
-    if (event.key === "Enter") {
-      toggleOpen();
-    }
-  };
 
   const onKeydown = (event) => {
     switch (event.key) {
@@ -48,34 +37,36 @@
       }
     }
   };
+
+  let fullscreenElement;
+  const toggleFullscreen = () => {
+    if (fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      document.documentElement.requestFullscreen();
+    }
+  };
 </script>
 
 <svelte:window on:keydown={onKeydown} />
+<svelte:document bind:fullscreenElement />
 
 <div class="controls">
-  {#if open}
-    <div class="menu">
-      <div class="menu-item">
-        <button class="autoplay-button" on:click={onToggleAutoplay}>
-          {#if $autoplay}
-            <Pause />
-          {:else}
-            <Play />
-          {/if}
-        </button>
-        <input
-          type="number"
-          value={$interval / 1000}
-          on:input={onTimeChanged}
-          on:keydown={onInputKeydown}
-        />
-      </div>
-    </div>
-  {/if}
-
-  <button class="fab" on:click={toggleOpen}>
-    <CircleEllipsis size={32} />
+  <button on:click={toggleFullscreen}>
+    {#if fullscreenElement}
+      <Minimize />
+    {:else}
+      <Maximize />
+    {/if}
   </button>
+  <button on:click={onToggleAutoplay}>
+    {#if $autoplay}
+      <Pause />
+    {:else}
+      <Play />
+    {/if}
+  </button>
+  <input type="number" value={$interval / 1000} on:input={onTimeChanged} />
 </div>
 
 <style lang="postcss">
@@ -85,9 +76,8 @@
     bottom: 1rem;
     left: 1rem;
     display: flex;
-    flex-direction: column;
     gap: 1rem;
-    align-items: start;
+    align-items: center;
   }
 
   button {
@@ -95,29 +85,27 @@
     border: 0;
     padding: 0;
     cursor: pointer;
-  }
-  .fab {
     color: white;
-  }
-  .autoplay-button {
     display: flex;
   }
 
-  .menu {
-    background-color: rgba(255, 255, 255, 0.85);
-
-    padding: 0.75rem 1rem;
-    border-radius: 0.25rem;
-
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  input {
+    font-size: 1rem;
+    border: 0;
+    border-radius: 4px;
+    color: white;
+    background-color: rgba(255, 255, 255, 0.15);
+    padding: 0.25rem 0.5rem;
+    width: 18px;
   }
-
-  .menu-item {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.5rem;
+  input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+    margin: 0;
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 </style>
