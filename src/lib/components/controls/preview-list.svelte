@@ -1,5 +1,5 @@
 <script>
-  import { currentIdx, queue, thumbnails } from "$lib/posts";
+  import { posts, current, thumbnails } from "$lib/posts";
   import {
     ChevronLeft,
     ChevronRight,
@@ -8,30 +8,15 @@
   } from "lucide-svelte";
   import IconButton from "./icon-button.svelte";
   const onClickPost = (idx) => () => {
-    $currentIdx = idx;
-  };
-
-  const first = () => {
-    $currentIdx = 0;
-  };
-  const prev = () => {
-    if ($currentIdx === 0) return;
-    $currentIdx--;
-  };
-  const next = () => {
-    if ($currentIdx + 1 === $queue.length) return;
-    $currentIdx++;
-  };
-  const last = () => {
-    $currentIdx = $queue.length - 5;
+    posts.goto(idx);
   };
 </script>
 
 <div class="preview-container">
-  <IconButton on:click={first}>
+  <IconButton on:click={posts.first}>
     <ChevronFirst />
   </IconButton>
-  <IconButton on:click={prev}>
+  <IconButton on:click={posts.prev}>
     <ChevronLeft />
   </IconButton>
 
@@ -39,7 +24,7 @@
     {#each $thumbnails as post}
       <div class="preview-thumbnail">
         <button
-          class:current={$currentIdx === post.idx}
+          class:current={$current.idx === post.idx}
           on:click={onClickPost(post.idx)}
         >
           {post.idx + 1}
@@ -49,10 +34,10 @@
     {/each}
   </div>
 
-  <IconButton on:click={next}>
+  <IconButton on:click={posts.next}>
     <ChevronRight />
   </IconButton>
-  <IconButton on:click={last}>
+  <IconButton on:click={posts.last}>
     <ChevronLast />
   </IconButton>
 </div>

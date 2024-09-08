@@ -1,51 +1,18 @@
 <script>
   import { Play, Pause, Maximize, Minimize, Eye, EyeOff } from "lucide-svelte";
-  import { interval, autoplay } from "$lib/timer";
-  import { currentIdx, current, queue } from "$lib/posts";
+  import { autoplay } from "$lib/timer";
+  import { current, posts } from "$lib/posts";
   import PreviewList from "./preview-list.svelte";
   import IconButton from "./icon-button.svelte";
-
-  function debounce(func, timeout = 300) {
-    let ref;
-    return (...args) => {
-      clearTimeout(ref);
-      ref = setTimeout(() => func.apply(this, args), timeout);
-    };
-  }
+  import IntervalInput from "./interval-input.svelte";
 
   let hide = false;
-  const onToggleHide = () => {
+  const toggleHide = () => {
     hide = !hide;
   };
 
-  const onToggleAutoplay = () => {
+  const toggleAutoplay = () => {
     $autoplay = !$autoplay;
-  };
-
-  const onTimeChanged = debounce((event) => {
-    $interval = event.target.value * 1000;
-  }, 800);
-
-  const onKeydown = (event) => {
-    switch (event.key) {
-      case " ": {
-        $autoplay = !$autoplay;
-        break;
-      }
-      case "ArrowLeft": {
-        if ($currentIdx === 0) return;
-        $currentIdx--;
-        break;
-      }
-      case "ArrowRight": {
-        if ($currentIdx + 1 === $queue.length) return;
-        $currentIdx++;
-        break;
-      }
-      case "i":
-        window.open($current.permalink, "_blank");
-        break;
-    }
   };
 
   let fullscreenElement;
@@ -56,6 +23,26 @@
       document.documentElement.requestFullscreen();
     }
   };
+
+  const onKeydown = (event) => {
+    switch (event.key) {
+      case " ": {
+        $autoplay = !$autoplay;
+        break;
+      }
+      case "ArrowLeft": {
+        posts.prev();
+        break;
+      }
+      case "ArrowRight": {
+        posts.next();
+        break;
+      }
+      case "i":
+        window.open($current.permalink, "_blank");
+        break;
+    }
+  };
 </script>
 
 <svelte:window on:keydown={onKeydown} />
@@ -63,19 +50,14 @@
 
 <div class="controls">
   <div class="left" class:hide>
-    <IconButton on:click={onToggleAutoplay}>
+    <IconButton on:click={toggleAutoplay}>
       {#if $autoplay}
         <Pause />
       {:else}
         <Play />
       {/if}
     </IconButton>
-    <input
-      type="number"
-      value={$interval / 1000}
-      on:input={onTimeChanged}
-      on:focus={(e) => e.target.select()}
-    />
+    <IntervalInput />
   </div>
 
   <div class="center" class:hide>
@@ -92,7 +74,7 @@
         {/if}
       </IconButton>
     </div>
-    <IconButton on:click={onToggleHide}>
+    <IconButton on:click={toggleHide}>
       {#if hide}
         <Eye />
       {:else}
@@ -125,33 +107,6 @@
     flex: 1;
     display: flex;
     justify-content: center;
-  }
-
-  input {
-    font-size: 1rem;
-    border: 0;
-    border-radius: 4px;
-    color: white;
-    background-color: rgba(255, 255, 255, 0.15);
-    padding: 0.25rem 0.5rem;
-    width: 18px;
-    transition: background-color 200ms ease-out;
-  }
-  input:hover {
-    background-color: rgba(255, 255, 255, 0.25);
-  }
-  input:focus {
-    outline: none;
-  }
-  input[type="number"] {
-    -moz-appearance: textfield;
-    appearance: textfield;
-    margin: 0;
-  }
-  input[type="number"]::-webkit-inner-spin-button,
-  input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
   }
 
   .hide {

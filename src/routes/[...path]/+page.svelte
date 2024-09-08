@@ -1,44 +1,32 @@
 <script>
   import Controls from "$lib/components/controls/controls.svelte";
-  import Video from "$lib/components/video.svelte";
-  import Image from "$lib/components/image.svelte";
+  import Post from "$lib/components/post.svelte";
   import { tick } from "$lib/timer";
-  import { currentIdx, current, queue, prefetch } from "$lib/posts";
+  import { posts, current, prefetch, runningLow } from "$lib/posts";
 
-  export let data;
+  $: if ($tick) posts.next();
+  $: if ($runningLow) posts.loadMore();
 
-  $: if ($tick) next();
-  function next() {
-    $currentIdx++;
-  }
-
-  $: if ($currentIdx + 5 >= $queue.length) {
-    data.loadMore();
-  }
+  $: console.log('queue', $posts.queue.length);
   $: console.log($current);
 </script>
 
-<Controls />
 
 {#if $current}
+  <Controls />
+
   <div class="current">
-    {#if $current.video}
-      <Video src={$current.video.src} />
-    {:else}
-      <Image url={$current.url} title={$current.title} />
-    {/if}
+    <Post post={$current} />
   </div>
 {/if}
 
-<div class="prefetch">
-  {#each $prefetch as post}
-    {#if post.video}
-      <Video src={post.video.src} />
-    {:else}
-      <Image url={post.url} title={post.title} />
-    {/if}
-  {/each}
-</div>
+{#if $prefetch.length}
+  <div class="prefetch">
+    {#each $prefetch as post}
+      <Post {post} />
+    {/each}
+  </div>
+{/if}
 
 <style>
   :global(html, body) {
