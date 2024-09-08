@@ -66,7 +66,12 @@
       <Play />
     {/if}
   </button>
-  <input type="number" value={$interval / 1000} on:input={onTimeChanged} />
+  <input
+    type="number"
+    value={$interval / 1000}
+    on:input={onTimeChanged}
+    on:focus={(e) => e.target.select()}
+  />
 </div>
 
 <style lang="postcss">
@@ -97,6 +102,9 @@
     background-color: rgba(255, 255, 255, 0.15);
     padding: 0.25rem 0.5rem;
     width: 18px;
+  }
+  input:focus {
+    outline: none;
   }
   input[type="number"] {
     -moz-appearance: textfield;

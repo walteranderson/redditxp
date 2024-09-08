@@ -21,12 +21,7 @@ function formatItem(item) {
     album = extractFromMediaMetadata(item.data);
   }
 
-  let video = null;
-  if (item.data.preview?.reddit_video_preview?.fallback_url) {
-    video = {
-      src: item.data.preview.reddit_video_preview.fallback_url
-    }
-  }
+  let video = getVideo(item.data);
 
   return {
     id: item.data.id,
@@ -36,7 +31,22 @@ function formatItem(item) {
     url,
     album,
     video,
+    _item: item
   };
+}
+
+function getVideo(data) {
+  if (data.preview?.reddit_video_preview?.fallback_url) {
+    return {
+      src: data.preview.reddit_video_preview.fallback_url
+    }
+  }
+
+  if (data.media?.reddit_video?.fallback_url) {
+    return {
+      src: data.media.reddit_video.fallback_url
+    }
+  }
 }
 
 function extractFromMediaMetadata(data) {
@@ -54,6 +64,7 @@ function extractFromMediaMetadata(data) {
     }
 
     album.push({
+      data,
       title: data.title,
       url,
     });
