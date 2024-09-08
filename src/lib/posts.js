@@ -26,11 +26,6 @@ export const thumbnails = derived(
   ([$queue, $currentIdx], set) => {
     const min = Math.max($currentIdx - 5, 0);
     const max = min === 0 ? 10 : $currentIdx + 5;
-    console.log('thumbnails',{
-      current: $currentIdx,
-      min, 
-      max
-    });
     set($queue.slice(min, max));
   }
 );

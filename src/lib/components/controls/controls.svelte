@@ -1,7 +1,7 @@
 <script>
   import { Play, Pause, Maximize, Minimize, Eye, EyeOff } from "lucide-svelte";
   import { interval, autoplay } from "$lib/timer";
-  import { currentIdx, queue } from "$lib/posts";
+  import { currentIdx, current, queue } from "$lib/posts";
   import PreviewList from "./preview-list.svelte";
   import IconButton from "./icon-button.svelte";
 
@@ -42,6 +42,9 @@
         $currentIdx++;
         break;
       }
+      case "i":
+        window.open($current.permalink, "_blank");
+        break;
     }
   };
 
@@ -59,7 +62,7 @@
 <svelte:document bind:fullscreenElement />
 
 <div class="controls">
-  <div class="options" class:hide>
+  <div class="left" class:hide>
     <IconButton on:click={toggleFullscreen}>
       {#if fullscreenElement}
         <Minimize />
@@ -82,11 +85,11 @@
     />
   </div>
 
-  <div class="previews" class:hide>
+  <div class="center" class:hide>
     <PreviewList />
   </div>
 
-  <div class="hide-controls">
+  <div class="right">
     <IconButton on:click={onToggleHide}>
       {#if hide}
         <Eye />
@@ -109,11 +112,17 @@
     gap: 1rem;
   }
 
-  .options {
+  .left,
+  .right {
     display: flex;
     flex-direction: row;
     gap: 1rem;
     align-items: center;
+  }
+  .center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
   }
 
   input {
@@ -141,12 +150,6 @@
   input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
-  }
-
-  .previews {
-    flex: 1;
-    display: flex;
-    justify-content: center;
   }
 
   .hide {
