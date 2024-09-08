@@ -45,7 +45,7 @@
     position: absolute;
     min-width: 70px;
     left: 0;
-    bottom: 28px;
+    bottom: 2.25rem;
     object-fit: cover;
     height: 70px;
     border-radius: 0.25rem;

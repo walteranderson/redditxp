@@ -3,7 +3,13 @@
 </script>
 
 {#key src}
-  <video autoplay loop>
+  <video
+    loop
+    muted
+    autoplay
+    playsinline
+    preload="auto"
+  >
     <track kind="captions" />
     <source {src} />
   </video>
