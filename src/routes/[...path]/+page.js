@@ -25,8 +25,9 @@ export async function load({ params, url }) {
       return list;
     }, []);
 
-    queue.update(q => {
-      return [...q, ...formatted];
+    queue.update(queue => {
+      const newQueue = [...queue, ...formatted];
+      return newQueue.map((q, idx) => ({ ...q, idx }))
     });
   }
 

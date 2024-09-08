@@ -3,7 +3,7 @@
   import Video from "$lib/components/video.svelte";
   import Image from "$lib/components/image.svelte";
   import { tick } from "$lib/timer";
-  import { currentIdx, queue, prefetch } from "$lib/posts";
+  import { currentIdx, current, queue, prefetch } from "$lib/posts";
 
   export let data;
 
@@ -12,22 +12,20 @@
     $currentIdx++;
   }
 
-  $: if ($currentIdx + 2 >= $queue.length) {
+  $: if ($currentIdx + 5 >= $queue.length) {
     data.loadMore();
   }
-
-  $: current = $queue[$currentIdx];
-  $: console.log(current);
+  $: console.log($current);
 </script>
 
 <Controls />
 
-{#if current}
+{#if $current}
   <div class="current">
-    {#if current.video}
-      <Video src={current.video.src} />
+    {#if $current.video}
+      <Video src={$current.video.src} />
     {:else}
-      <Image url={current.url} title={current.title} />
+      <Image url={$current.url} title={$current.title} />
     {/if}
   </div>
 {/if}

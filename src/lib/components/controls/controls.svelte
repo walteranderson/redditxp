@@ -1,8 +1,9 @@
 <script>
-  import { Play, Pause, Maximize, Minimize } from "lucide-svelte";
+  import { Play, Pause, Maximize, Minimize, Eye, EyeOff } from "lucide-svelte";
   import { interval, autoplay } from "$lib/timer";
   import { currentIdx, queue } from "$lib/posts";
   import PreviewList from "./preview-list.svelte";
+  import IconButton from "./icon-button.svelte";
 
   function debounce(func, timeout = 300) {
     let ref;
@@ -11,6 +12,11 @@
       ref = setTimeout(() => func.apply(this, args), timeout);
     };
   }
+
+  let hide = false;
+  const onToggleHide = () => {
+    hide = !hide;
+  };
 
   const onToggleAutoplay = () => {
     $autoplay = !$autoplay;
@@ -53,21 +59,21 @@
 <svelte:document bind:fullscreenElement />
 
 <div class="controls">
-  <div class="options">
-    <button on:click={toggleFullscreen}>
+  <div class="options" class:hide>
+    <IconButton on:click={toggleFullscreen}>
       {#if fullscreenElement}
         <Minimize />
       {:else}
         <Maximize />
       {/if}
-    </button>
-    <button on:click={onToggleAutoplay}>
+    </IconButton>
+    <IconButton on:click={onToggleAutoplay}>
       {#if $autoplay}
         <Pause />
       {:else}
         <Play />
       {/if}
-    </button>
+    </IconButton>
     <input
       type="number"
       value={$interval / 1000}
@@ -76,7 +82,19 @@
     />
   </div>
 
-  <PreviewList />
+  <div class="previews" class:hide>
+    <PreviewList />
+  </div>
+
+  <div class="hide-controls">
+    <IconButton on:click={onToggleHide}>
+      {#if hide}
+        <Eye />
+      {:else}
+        <EyeOff />
+      {/if}
+    </IconButton>
+  </div>
 </div>
 
 <style lang="postcss">
@@ -96,19 +114,6 @@
     flex-direction: row;
     gap: 1rem;
     align-items: center;
-  }
-
-  button {
-    background: none;
-    border: 0;
-    padding: 0;
-    cursor: pointer;
-    color: rgba(255, 255, 255, 0.5);
-    display: flex;
-    transition: color 200ms ease-out;
-  }
-  button:hover {
-    color: rgba(255, 255, 255, 0.75);
   }
 
   input {
@@ -136,5 +141,15 @@
   input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+  }
+
+  .previews {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+
+  .hide {
+    visibility: hidden;
   }
 </style>
