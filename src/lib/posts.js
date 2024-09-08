@@ -108,6 +108,7 @@ function createQueueStore() {
   }
   function goto(idx) {
     store.update(s => {
+      if (!s.queue.at(idx)) return s;
       s.current = idx;
       return s;
     });
