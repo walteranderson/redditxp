@@ -32,6 +32,10 @@
     cursor: pointer;
     color: white;
     margin-right: 1rem;
+    transition: background-color 200ms ease-out;
+  }
+  button:hover {
+    background-color: rgba(255, 255, 255, 0.25);
   }
 
   .current {

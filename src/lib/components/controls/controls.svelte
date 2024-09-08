@@ -103,8 +103,12 @@
     border: 0;
     padding: 0;
     cursor: pointer;
-    color: white;
+    color: rgba(255, 255, 255, 0.5);
     display: flex;
+    transition: color 200ms ease-out;
+  }
+  button:hover {
+    color: rgba(255, 255, 255, 0.75);
   }
 
   input {
@@ -115,6 +119,10 @@
     background-color: rgba(255, 255, 255, 0.15);
     padding: 0.25rem 0.5rem;
     width: 18px;
+    transition: background-color 200ms ease-out;
+  }
+  input:hover {
+    background-color: rgba(255, 255, 255, 0.25);
   }
   input:focus {
     outline: none;
