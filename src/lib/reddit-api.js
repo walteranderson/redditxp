@@ -5,7 +5,7 @@ export async function getPosts(path, searchParams) {
   const res = await fetchJsonp(url, { jsonpCallback: 'jsonp' });
   const data = await res.json();
   const posts = data.data.children
-    .filter(i => !i.data.stickied)
+    .filter(i => !i.data.stickied && !i.data.is_self)
     .map(formatItem)
     .filter(i => !i.url.includes('gfycat.com'))
   return {
@@ -19,7 +19,7 @@ function formatItem(item) {
 
   let album = [];
   if (url.includes('reddit.com/gallery/') && item.data.media_metadata) {
-    album = extractFromMediaMetadata(item.data);
+    album = extractFromMediaMetadata(item);
   }
 
   let video = getVideo(item.data);
@@ -32,10 +32,14 @@ function formatItem(item) {
     url,
     album,
     video,
-    permalink: `https://reddit.com${item.data.permalink}`,
-    thumbnail: item.data.thumbnail,
+    permalink: permalink(item.data.permalink),
+    thumbnail: decode(item.data.thumbnail),
     _item: item
   };
+}
+
+function permalink(path) {
+  return `https://reddit.com${path}`
 }
 
 function getVideo(data) {
@@ -52,12 +56,13 @@ function getVideo(data) {
   }
 }
 
-function extractFromMediaMetadata(data) {
-  const ids = data.gallery_data.items.map(x => x.media_id);
+function extractFromMediaMetadata(item) {
+  const ids = item.data.gallery_data.items.map(x => x.media_id);
 
   let album = [];
   for (const id of ids) {
-    const media = data.media_metadata[id];
+    const media = item.data.media_metadata[id];
+    const thumbnail = decode(media.p[0].u);
 
     let url;
     if (media.m === 'image/gif' && media.s?.gif) {
@@ -67,8 +72,10 @@ function extractFromMediaMetadata(data) {
     }
 
     album.push({
-      data,
-      title: data.title,
+      _item: item,
+      title: item.data.title,
+      permalink: permalink(item.data.permalink),
+      thumbnail,
       url,
     });
   }
