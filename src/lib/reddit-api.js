@@ -11,9 +11,9 @@ export async function getPosts(path, searchParams) {
 }
 
 function filter(item) {
-  if (item.url.stickied) return false;
+  if (item.data.stickied) return false;
   if (item.data.is_self) return false;
-  if (item.url.includes('gfycat.com')) return false;
+  if (item.data.url.includes('gfycat.com')) return false;
   return true;
 }
 
