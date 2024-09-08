@@ -36,7 +36,7 @@ export const runningLow = derived(
   posts,
   ($p) => {
     if ($p.queue.length === 0) return false;
-    return $p.current + PREFETCH_OFFSET >= $p.queue.length;
+    return $p.current + PREFETCH_OFFSET > $p.queue.length;
   }
 );
 
