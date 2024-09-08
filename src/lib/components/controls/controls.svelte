@@ -63,13 +63,6 @@
 
 <div class="controls">
   <div class="left" class:hide>
-    <IconButton on:click={toggleFullscreen}>
-      {#if fullscreenElement}
-        <Minimize />
-      {:else}
-        <Maximize />
-      {/if}
-    </IconButton>
     <IconButton on:click={onToggleAutoplay}>
       {#if $autoplay}
         <Pause />
@@ -90,6 +83,15 @@
   </div>
 
   <div class="right">
+    <div class:hide>
+      <IconButton on:click={toggleFullscreen}>
+        {#if fullscreenElement}
+          <Minimize />
+        {:else}
+          <Maximize />
+        {/if}
+      </IconButton>
+    </div>
     <IconButton on:click={onToggleHide}>
       {#if hide}
         <Eye />
