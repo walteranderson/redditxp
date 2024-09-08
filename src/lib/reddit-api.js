@@ -4,14 +4,17 @@ export async function getPosts(path, searchParams) {
   const url = `https://www.reddit.com/${path}.json?${searchParams.toString()}`;
   const res = await fetchJsonp(url, { jsonpCallback: 'jsonp' });
   const data = await res.json();
-  const posts = data.data.children
-    .filter(i => !i.data.stickied && !i.data.is_self)
-    .map(formatItem)
-    .filter(i => !i.url.includes('gfycat.com'))
   return {
-    posts,
+    posts: data.data.children.filter(filter).map(formatItem),
     after: data.data.after,
   };
+}
+
+function filter(item) {
+  if (item.url.stickied) return false;
+  if (item.data.is_self) return false;
+  if (item.url.includes('gfycat.com')) return false;
+  return true;
 }
 
 function formatItem(item) {
