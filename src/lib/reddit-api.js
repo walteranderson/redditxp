@@ -7,6 +7,7 @@ export async function getPosts(path, searchParams) {
   const posts = data.data.children
     .filter(i => !i.data.stickied)
     .map(formatItem)
+    .filter(i => !i.url.includes('gfycat.com'))
   return {
     posts,
     after: data.data.after,
@@ -31,6 +32,8 @@ function formatItem(item) {
     url,
     album,
     video,
+    permalink: `https://reddit.com${item.data.permalink}`,
+    thumbnail: item.data.thumbnail,
     _item: item
   };
 }

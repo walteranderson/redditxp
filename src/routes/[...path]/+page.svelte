@@ -1,5 +1,5 @@
 <script>
-  import Controls from "$lib/components/controls.svelte";
+  import Controls from "$lib/components/controls/controls.svelte";
   import Video from "$lib/components/video.svelte";
   import Image from "$lib/components/image.svelte";
   import { tick } from "$lib/timer";
