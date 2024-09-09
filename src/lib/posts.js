@@ -4,7 +4,7 @@ import { writable, derived } from "svelte/store";
 const PREFETCH_OFFSET = 5;
 const THUMBNAILS_OFFSET = 5;
 
-export const posts = createQueueStore();
+export const posts = createPostsStore();
 
 export const current = derived(
   posts,
@@ -21,7 +21,18 @@ export const prefetch = derived(
       $p.current + PREFETCH_OFFSET
     ));
   }
-)
+);
+
+export const runningLow = derived(
+  prefetch,
+  ($p, set) => {
+    set(
+      $p.length === 0
+        ? false
+        : $p.length <= PREFETCH_OFFSET
+    );
+  }
+);
 
 export const thumbnails = derived(
   posts,
@@ -32,15 +43,7 @@ export const thumbnails = derived(
   }
 );
 
-export const runningLow = derived(
-  posts,
-  ($p) => {
-    if ($p.queue.length === 0) return false;
-    return $p.current + PREFETCH_OFFSET > $p.queue.length;
-  }
-);
-
-function createQueueStore() {
+function createPostsStore() {
   const store = writable({
     current: 0,
     queue: [],
@@ -57,7 +60,7 @@ function createQueueStore() {
     add(data.posts);
   }
   async function loadMore() {
-    if (!_after) throw new Error('calling loadMore before load');
+    if (!_after) return;
     _params.set('after', _after);
     const data = await getPosts(_path, _params);
     _after = data.after;

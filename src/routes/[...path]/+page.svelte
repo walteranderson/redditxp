@@ -2,15 +2,18 @@
   import Controls from "$lib/components/controls/controls.svelte";
   import Post from "$lib/components/post.svelte";
   import { tick } from "$lib/timer";
-  import { posts, current, prefetch, runningLow } from "$lib/posts";
+  import { posts, current, runningLow, prefetch } from "$lib/posts";
 
   $: if ($tick) posts.next();
   $: if ($runningLow) posts.loadMore();
 
-  $: console.log('queue', $posts.queue.length);
-  $: console.log($current);
+  $: console.log({
+    queue: $posts.queue.length,
+    $current,
+    $prefetch,
+    $runningLow,
+  });
 </script>
-
 
 {#if $current}
   <Controls />
