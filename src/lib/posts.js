@@ -29,7 +29,7 @@ export const runningLow = derived(
     set(
       $p.length === 0
         ? false
-        : $p.length <= PREFETCH_OFFSET
+        : $p.length < PREFETCH_OFFSET
     );
   }
 );

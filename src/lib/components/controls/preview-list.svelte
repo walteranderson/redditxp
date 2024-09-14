@@ -50,7 +50,6 @@
   }
 
   .preview-list {
-    /* overflow-x: hidden; */
     white-space: nowrap;
     color: white;
     display: flex;
