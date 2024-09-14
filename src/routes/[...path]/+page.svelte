@@ -1,21 +1,11 @@
 <script>
   import Controls from "$lib/components/controls/controls.svelte";
   import Post from "$lib/components/post.svelte";
-  import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import { tick } from "$lib/timer";
   import { posts, current, runningLow, prefetch } from "$lib/posts";
 
-  onMount(() => {
-    if ($posts.queue.length === 0) {
-      posts.load(
-        $page.url.hash ? $page.url.hash.slice(1) : $page.params.path,
-        // TODO: pull out search params from hash if present
-        $page.url.searchParams
-      );
-    }
-  });
-
+  $: posts.load($page);
   $: if ($tick) posts.next();
   $: if ($runningLow) posts.loadMore();
 

@@ -52,10 +52,20 @@ function createPostsStore() {
   let _path;
   let _params;
   let _after;
-  async function load(path, params) {
-    _path = path;
-    _params = params;
-    const data = await getPosts(path, params);
+  async function load(page) {
+    store.set({ current: 0, queue: [] });
+
+    let hashPath = page.url.hash?.slice(1);
+    let hashParams = null;
+    if (hashPath && hashPath.includes('?')) {
+      hashParams = new URLSearchParams(hashPath.substring(hashPath.indexOf('?')));
+      hashPath = hashPath.slice(0, hashPath.indexOf('?'));
+    }
+
+    _path = hashPath ?? page.params.path;
+    _params = hashParams ?? page.url.searchParams;
+
+    const data = await getPosts(_path, _params);
     _after = data.after;
     add(data.posts);
   }
@@ -67,19 +77,18 @@ function createPostsStore() {
     add(data.posts);
   }
   function add(posts) {
-    const formatted = posts.reduce((list, cur) => {
-      if (cur.album.length) {
-        list.push(...cur.album);
-      } else {
-        list.push(cur);
-      }
-      return list;
-    }, []);
     store.update(s => {
-      return {
-        ...s,
-        queue: [...s.queue, ...formatted].map((q, idx) => ({ ...q, idx }))
-      }
+      let list = posts.reduce((acc, cur) => {
+        acc.push.apply(acc, cur.album.length ? cur.album : [cur]);
+        return acc;
+      }, []);
+      s.queue = s.queue
+        .concat(list)
+        .map((q, idx) => {
+          q.idx = idx;
+          return q;
+        });
+      return s;
     });
   }
 
